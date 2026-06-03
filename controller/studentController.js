@@ -1,6 +1,14 @@
 const db = require('../utils/db-connection');
 const Students = require("../models/students");
 
+const getAllStudents = async (req, res) => {
+    try {
+        const students = await Students.findAll();
+        res.status(200).json(students);
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+};
 
 const addEntries = async (req, res) => {
     try {
@@ -21,30 +29,29 @@ const addEntries = async (req, res) => {
 };
 
 
-const updateEntry = (req, res) => {
-    const { id } = req.params;
-    const { name } = req.body;
-    const updateQuery = "UPDATE students set name =? WHERE id =?";
+const updateEntry = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name } = req.body;
 
-    db.execute(updateQuery, [name, id], (err, result) => {
-        if (err) {
-            console.log(err.message);
-            res.status(500).send(err.message);
-            db.end();
-            return;
+        const student = await Students.findByPk(id);
+
+        if (!student) {
+            res.status(404).send("User is not found");
         }
 
-        if (result.affectedRows === 0) {
-            res.status(404).send("Student not found");
-            return;
-        }
+        student.name = name;
+        await student.save();
+        res.status(200).send("User has been updated!");
 
-        res.status(200).send("User has been updated");
+    } catch (error) {
+        res.status(500).send("User cannot not updated");
+    }
+};
 
-    })
-}
 
 const deleteEntry = (req, res) => {
+
     const { id } = req.params;
     const deleteQuery = "DELETE FROM students WHERE id= ?";
 
@@ -64,6 +71,7 @@ const deleteEntry = (req, res) => {
 }
 
 module.exports = {
+    getAllStudents,
     addEntries,
     updateEntry,
     deleteEntry
