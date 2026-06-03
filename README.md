@@ -293,6 +293,23 @@ Example:
   "message": "Student not found"
 }
 ```
+---
+
+## 🎯 Assignment Deliverables Covered
+
+✅ Insert Operation using `create()`
+
+✅ Read All Records using `findAll()`
+
+✅ Read Single Record using `findByPk()`
+
+✅ Update Record using `save()`
+
+✅ Delete Record using `destroy()`
+
+✅ Sequelize ORM Integration
+
+✅ MySQL Database Connectivity
 
 ---
 
@@ -320,3 +337,6 @@ GitHub: [@yashavshukla](https://github.com/yashav-shukla)
 If you found this project useful, consider giving it a ⭐ on GitHub.
 
 Happy Coding! 🚀
+
+
+
