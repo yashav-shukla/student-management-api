@@ -1,5 +1,5 @@
 const db = require('../utils/db-connection');
-
+const Students = require("../models/students");
 
 const addEntries = (req, res) => {
     //   res.send("Add Entries function called")

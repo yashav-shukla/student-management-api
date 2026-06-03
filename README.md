@@ -1,37 +1,47 @@
-# 🚀 Express MySQL CRUD API
 
 <p align="center">
-  <h3 align="center">Student Management System using Express.js & MySQL</h3>
+  <h1 align="center">🚀 Express MySQL CRUD API</h1>
+</p>
+<p align="center">
+  <h1 align="center">🎓 Student Management API using Express & Sequelize</h1>
 </p>
 
 <p align="center">
-  A RESTful API that performs <b>Create, Update, and Delete</b> operations on student records using Express.js and MySQL.
+  RESTful API built with Node.js, Express.js, MySQL, and Sequelize ORM for managing student records.
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Node.js-Backend-green" />
+  <img src="https://img.shields.io/badge/Express.js-Framework-black" />
+  <img src="https://img.shields.io/badge/MySQL-Database-blue" />
+  <img src="https://img.shields.io/badge/Sequelize-ORM-teal" />
 </p>
 
 ---
 
 ## 📖 Overview
 
-This project demonstrates how to connect a Node.js Express application with a MySQL database using the `mysql2` package.
+This project demonstrates how to build a RESTful API using Express.js and Sequelize ORM connected to a MySQL database.
 
-The API allows users to:
+The API supports:
 
-* ➕ Add a new student
-* ✏️ Update an existing student
-* 🗑️ Delete a student
-* ⚠️ Handle database errors gracefully
-* 📋 Log database operations for debugging
+* ➕ Create Student Records
+* ✏️ Update Existing Students
+* 🗑️ Delete Students
+* 🔄 Automatic Database Synchronization
+* ⚡ Sequelize ORM Integration
+* 🛡️ Error Handling & Validation
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Technology | Usage                |
+| Technology | Purpose              |
 | ---------- | -------------------- |
 | Node.js    | Runtime Environment  |
 | Express.js | Backend Framework    |
-| MySQL      | Database             |
-| mysql2     | MySQL Driver         |
+| MySQL      | Relational Database  |
+| Sequelize  | ORM                  |
 | JavaScript | Programming Language |
 
 ---
@@ -39,10 +49,13 @@ The API allows users to:
 ## 📂 Project Structure
 
 ```text
-SQL/
+student-management-api/
 │
 ├── controller/
 │   └── studentController.js
+│
+├── models/
+│   └── students.js
 │
 ├── routes/
 │   └── studentsRoutes.js
@@ -63,13 +76,13 @@ SQL/
 ### Clone Repository
 
 ```bash
-git clone https://github.com/yashavshukla/Express-MySQL-CRUD.git
+git clone https://github.com/yashav-shukla/student-management-api.git
 ```
 
-### Move to Project Folder
+### Navigate to Project
 
 ```bash
-cd Express-MySQL-CRUD
+cd student-management-api
 ```
 
 ### Install Dependencies
@@ -80,64 +93,86 @@ npm install
 
 ---
 
+## 📦 Required Packages
+
+```bash
+npm install express sequelize mysql2
+```
+
+---
+
 ## 🗄️ Database Setup
 
 Create Database:
 
 ```sql
-CREATE DATABASE studentdb;
+CREATE DATABASE testdb;
 ```
 
-Use Database:
+Verify:
 
 ```sql
-USE studentdb;
-```
-
-Create Table:
-
-```sql
-CREATE TABLE students (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NOT NULL
-);
+SHOW DATABASES;
 ```
 
 ---
 
-## 🔌 Configure Database Connection
+## 🔌 Configure Sequelize Connection
 
-Update your database credentials inside:
+File:
 
 ```text
 utils/db-connection.js
 ```
 
 ```javascript
-const mysql = require("mysql2");
+const { Sequelize } = require('sequelize');
 
-const connection = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "YOUR_PASSWORD",
-    database: "studentdb"
-});
+const sequelize = new Sequelize(
+    'testdb',
+    'root',
+    'YOUR_PASSWORD',
+    {
+        host: 'localhost',
+        dialect: 'mysql'
+    }
+);
 
-module.exports = connection;
+module.exports = sequelize;
 ```
 
 ---
 
-## ▶️ Running the Server
+## 📄 Student Model
 
-Development Mode:
+```javascript
+const { DataTypes } = require("sequelize");
+const sequelize = require("../utils/db-connection");
 
-```bash
-npm run dev
+const Students = sequelize.define("Students", {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
+    name: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    email: {
+        type: DataTypes.STRING,
+        allowNull: false
+    }
+});
+
+module.exports = Students;
 ```
 
-Production Mode:
+---
+
+## ▶️ Run Application
+
+Start Server:
 
 ```bash
 node index.js
@@ -146,8 +181,8 @@ node index.js
 Expected Output:
 
 ```bash
-Database Connected Successfully
-Server Running on Port 3000
+Connection to the database has been created
+Server is running on port 3000
 ```
 
 ---
@@ -157,23 +192,23 @@ Server Running on Port 3000
 ### ➕ Add Student
 
 ```http
-POST /students
+POST /students/add
 ```
 
 Request Body:
 
 ```json
 {
-  "name": "Virat Kohli",
-  "email": "virat.kohli@example.com"
+  "name": "Yashav Shukla",
+  "email": "yashav@example.com"
 }
 ```
 
-Success Response:
+Response:
 
 ```json
 {
-  "message": "Student Added Successfully"
+  "message": "Student added successfully"
 }
 ```
 
@@ -182,23 +217,22 @@ Success Response:
 ### ✏️ Update Student
 
 ```http
-PUT /students/:id
+PUT /students/update/:id
 ```
 
 Request Body:
 
 ```json
 {
-  "name": "King Kohli",
-  "email": "king.kohli@example.com"
+  "name": "Updated Name"
 }
 ```
 
-Success Response:
+Response:
 
 ```json
 {
-  "message": "Student Updated Successfully"
+  "message": "Student updated successfully"
 }
 ```
 
@@ -207,73 +241,70 @@ Success Response:
 ### 🗑️ Delete Student
 
 ```http
-DELETE /students/:id
+DELETE /students/delete/:id
 ```
 
-Success Response:
+Response:
 
 ```json
 {
-  "message": "Student Deleted Successfully"
+  "message": "Student deleted successfully"
 }
 ```
 
 ---
 
-## 🧪 Assignment Verification
+## 🧪 Testing with Postman
 
-### Step 1: Insert Entry
+### Create Student
 
-```json
-{
-  "name": "Virat Kohli",
-  "email": "virat.kohli@example.com"
-}
+```http
+POST http://localhost:3000/students/add
 ```
 
-### Step 2: Update Entry
+### Update Student
 
-```json
-{
-  "name": "King Kohli",
-  "email": "king.kohli@example.com"
-}
+```http
+PUT http://localhost:3000/students/update/1
 ```
 
-### Step 3: Delete Entry
+### Delete Student
 
-Delete the updated student using its ID.
+```http
+DELETE http://localhost:3000/students/delete/1
+```
 
 ---
 
 ## ⚠️ Error Handling
 
-The API properly handles:
+The API handles:
 
-* Invalid Database Connections
-* Invalid Student IDs
-* Updating Non-Existing Students
-* Deleting Non-Existing Students
+* Invalid Database Credentials
+* Missing Request Data
+* Student Not Found
+* Database Query Failures
 * Internal Server Errors
 
 Example:
 
 ```json
 {
-  "message": "Student Not Found"
+  "message": "Student not found"
 }
 ```
 
 ---
 
-## 📋 Console Logs
+## 🚀 Future Improvements
 
-```bash
-Student Added Successfully
-Student Updated Successfully
-Student Deleted Successfully
-```
-
+* Get All Students API
+* Get Student By ID API
+* Input Validation
+* Pagination
+* Search Functionality
+* Authentication & Authorization
+* Environment Variables (.env)
 ---
 
 ## 👨‍💻 Author
@@ -281,7 +312,6 @@ Student Deleted Successfully
 ### Yashav Shukla
 
 GitHub: [@yashavshukla](https://github.com/yashavshukla)
-- Profile: https://github.com/yashavshukla
 
 ---
 
