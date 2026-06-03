@@ -311,7 +311,7 @@ Example:
 
 ### Yashav Shukla
 
-GitHub: [@yashavshukla](https://github.com/yashavshukla)
+GitHub: [@yashavshukla](https://github.com/yashav-shukla)
 
 ---
 
