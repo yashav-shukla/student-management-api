@@ -1,21 +1,23 @@
 const db = require('../utils/db-connection');
 const Students = require("../models/students");
 
-const addEntries = (req, res) => {
-    //   res.send("Add Entries function called")
-    const { email, name } = req.body;
-    const insertQuery = `INSERT INTO Students (email,name) VALUES (?, ?)`;
 
-    db.execute(insertQuery, [email, name], (err) => {
-        if (err) {
-            console.log(err.message);
-            res.status(500).send(err.message);
-            db.end();
-            return;
-        }
-        console.log('Value has been inserted');
-        res.status(200).send(`Student with name ${name} successfully added`);
-    });
+const addEntries = async (req, res) => {
+    try {
+        const { email, name } = req.body;
+        const student = await Students.create({
+            email: email,
+            name: name
+        });
+
+        res.status(201).send(`User with name: ${name} is created!`);
+
+    } catch (error) {
+
+        res.status(500).send(`Unable to make an entry.`);
+
+    }
+
 };
 
 
@@ -43,16 +45,16 @@ const updateEntry = (req, res) => {
 }
 
 const deleteEntry = (req, res) => {
-    const {id} = req.params;
+    const { id } = req.params;
     const deleteQuery = "DELETE FROM students WHERE id= ?";
 
-    db.execute(deleteQuery,[id],(err,results)=>{
-        if(err){
+    db.execute(deleteQuery, [id], (err, results) => {
+        if (err) {
             console.log(err.message);
             res.status(500).send(err.message);
         }
 
-        if(results.affectedRows===0){
+        if (results.affectedRows === 0) {
             res.status(404).send("Student is not found");
             return;
         }
